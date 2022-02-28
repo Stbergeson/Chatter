@@ -3,66 +3,67 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Server
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            TcpListener server = null;
-            try
-            {
-                // Set the TcpListener on port 13000.
-                Int32 port = 13000;
-                IPAddress localAddr = IPAddress.Parse("127.0.0.1");
 
-                // TcpListener server = new TcpListener(port);
+        private class StateOfObject
+        {
+            public byte[] bytes;
+            public string data;
+            public TcpListener server;
+            public int port;
+            IPAddress localAddr;
+
+            public StateOfObject(int _port, string ip = "127.0.0.1")
+            {
+                port = _port;
+                localAddr = IPAddress.Parse(ip);
                 server = new TcpListener(localAddr, port);
 
-                // Start listening for client requests.
-                server.Start();
+                bytes = new byte[256];
+                data = null;
+            }
+        }
 
-                // Buffer for reading data
-                Byte[] bytes = new Byte[256];
-                String data = null;
+        private class Connection
+        {
+            public StateOfObject soo { get; set; }
+            public TcpClient client { get; set; }
+
+            public Connection(StateOfObject _soo, TcpClient _client)
+            {
+                soo = _soo;
+                client = _client;
+            }
+        }
+
+        public static async Task Main(string[] args)
+        {
+            StateOfObject soo = new(13000);
+
+            try
+            {
+
+                // Start listening for client requests.
+                soo.server.Start();
+                TcpClient client;
 
                 // Enter the listening loop.
                 while (true)
                 {
                     Console.Write("Waiting for a connection... ");
-
+                    client = soo.server.AcceptTcpClient();
+                    ThreadPool.QueueUserWorkItem(ThreadProc, new Connection(soo, client));
                     // Perform a blocking call to accept requests.
                     // You could also use server.AcceptSocket() here.
-                    TcpClient client = server.AcceptTcpClient();
-                    Console.WriteLine("Connected!");
+                    //TcpClient client = soo.server.AcceptTcpClient();
+                    //await ListenForClientAsync(await soo.server.AcceptTcpClientAsync(), soo);
 
-                    data = null;
-
-                    // Get a stream object for reading and writing
-                    NetworkStream stream = client.GetStream();
-
-                    int i;
-
-                    // Loop to receive all the data sent by the client.
-                    while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                    {
-                        // Translate data bytes to a ASCII string.
-                        data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                        Console.WriteLine("Received: {0}", data);
-
-                        // Process the data sent by the client.
-                        data = data.ToUpper();
-
-                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
-
-                        // Send back a response.
-                        stream.Write(msg, 0, msg.Length);
-                        Console.WriteLine("Sent: {0}", data);
-                    }
-
-                    // Shutdown and end connection
-                    client.Close();
                 }
             }
             catch (SocketException e)
@@ -72,11 +73,83 @@ namespace Server
             finally
             {
                 // Stop listening for new clients.
-                server.Stop();
+                soo.server.Stop();
             }
 
             Console.WriteLine("\nHit enter to continue...");
             Console.Read();
+        }
+
+        private static async void ThreadProc(object obj)
+        {
+            Connection connection = (Connection)obj;
+
+            await ListenForClientAsync(connection.client, connection.soo);
+            //ListenForClient(connection.client, connection.soo);
+        }
+
+        private static void ListenForClient(TcpClient client, StateOfObject soo)
+        {
+            Console.WriteLine("Connected!");
+
+
+
+            // Get a stream object for reading and writing
+            NetworkStream stream = client.GetStream();
+
+            int i;
+
+            // Loop to receive all the data sent by the client.
+            while ((i = stream.Read(soo.bytes, 0, soo.bytes.Length)) != 0)
+            {
+                // Translate data bytes to a ASCII string.
+                soo.data = System.Text.Encoding.ASCII.GetString(soo.bytes, 0, i);
+                Console.WriteLine("Received: {0}", soo.data);
+
+                // Process the data sent by the client.
+                soo.data = soo.data.ToUpper();
+
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(soo.data);
+
+                // Send back a response.
+                stream.Write(msg, 0, msg.Length);
+                Console.WriteLine("Sent: {0}", soo.data);
+            }
+
+            // Shutdown and end connection
+            client.Close();
+        }
+
+        private static async Task ListenForClientAsync(TcpClient client, StateOfObject soo)
+        {
+            Console.WriteLine("Connected!");
+
+
+
+            // Get a stream object for reading and writing
+            NetworkStream stream = client.GetStream();
+
+            int i;
+
+            // Loop to receive all the data sent by the client.
+            while ((i = stream.ReadAsync(soo.bytes, 0, soo.bytes.Length).Result) != 0)
+            {
+                // Translate data bytes to a ASCII string.
+                soo.data = System.Text.Encoding.ASCII.GetString(soo.bytes, 0, i);
+                Console.WriteLine("Received: {0}", soo.data);
+
+                // Process the data sent by the client.
+                soo.data = soo.data.ToUpper();
+
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(soo.data);
+
+                // Send back a response.
+                await stream.WriteAsync(msg, 0, msg.Length);
+                Console.WriteLine("Sent: {0}", soo.data);
+            }
+
+            // Shutdown and end connection
+            client.Close();
         }
     }
 }
