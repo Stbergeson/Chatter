@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Text;
 
 namespace Client
@@ -27,6 +28,10 @@ namespace Client
                 Int32 port = 13000;
                 TcpClient client = new TcpClient(server, port);
 
+
+                //create new thread to listen for incoming messages
+                ThreadPool.QueueUserWorkItem(ListenForMessages, client);
+
                 // Translate the passed message into ASCII and store it as a Byte array.
                 Byte[] data = null;
 
@@ -47,19 +52,6 @@ namespace Client
                     stream.Write(data, 0, data.Length);
 
                     Console.WriteLine("Sent: {0}", message);
-
-                    // Receive the TcpServer.response.
-
-                    // Buffer to store the response bytes.
-                    data = new Byte[256];
-
-                    // String to store the response ASCII representation.
-                    String responseData = String.Empty;
-
-                    // Read the first batch of the TcpServer response bytes.
-                    Int32 bytes = stream.Read(data, 0, data.Length);
-                    responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
-                    Console.WriteLine("Received: {0}", responseData);
                 }
 
 
@@ -78,6 +70,26 @@ namespace Client
 
             Console.WriteLine("\n Press Enter to continue...");
             Console.Read();
+        }
+
+        private static void ListenForMessages(object obj)
+        {
+            TcpClient client = (TcpClient)obj;
+            NetworkStream stream = client.GetStream();
+
+            // Buffer to store the response bytes.
+            byte[] data = new Byte[256];
+
+            // String to store the response ASCII representation.
+            string responseData;
+
+            while (true)
+            {
+                // Read the first batch of the TcpServer response bytes.
+                Int32 bytes = stream.Read(data, 0, data.Length);
+                responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                Console.WriteLine("Received: {0}", responseData);
+            }
         }
 
     }
