@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -10,7 +11,7 @@ namespace Server
 {
     class Program
     {
-
+        private static List<TcpClient> listOfClients;
         private class StateOfObject
         {
             public byte[] bytes;
@@ -45,7 +46,7 @@ namespace Server
         public static async Task Main(string[] args)
         {
             StateOfObject soo = new(13000);
-
+            listOfClients = new List<TcpClient>();
             try
             {
 
@@ -83,8 +84,16 @@ namespace Server
         private static async void ThreadProc(object obj)
         {
             Connection connection = (Connection)obj;
-
-            await ListenForClientAsync(connection.client, connection.soo);
+            listOfClients.Add(connection.client);
+            try
+            {
+                await ListenForClientAsync(connection.client, connection.soo);
+            }
+            catch
+            {
+                Console.WriteLine("Error with connection.");
+            }
+            
             //ListenForClient(connection.client, connection.soo);
         }
 
@@ -96,6 +105,7 @@ namespace Server
 
             // Get a stream object for reading and writing
             NetworkStream stream = client.GetStream();
+            
 
             int i;
 
@@ -111,9 +121,17 @@ namespace Server
 
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(soo.data);
 
-                // Send back a response.
                 stream.Write(msg, 0, msg.Length);
                 Console.WriteLine("Sent: {0}", soo.data);
+
+                Console.WriteLine("count: " + listOfClients.Count);
+                // Send back a response.
+                /*foreach (var item in listOfStreams)
+                {
+                    item.Write(msg, 0, msg.Length);
+                    Console.WriteLine("Sent: {0}", soo.data);
+                }*/
+                
             }
 
             // Shutdown and end connection
@@ -144,8 +162,15 @@ namespace Server
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(soo.data);
 
                 // Send back a response.
-                await stream.WriteAsync(msg, 0, msg.Length);
+                /*await stream.WriteAsync(msg, 0, msg.Length);
                 Console.WriteLine("Sent: {0}", soo.data);
+                Console.WriteLine("count: " + listOfStreams.Count);*/
+
+                foreach (var item in listOfClients)
+                {
+                    await item.GetStream().WriteAsync(msg, 0, msg.Length);
+                    Console.WriteLine("Sent: {0}", soo.data);
+                }
             }
 
             // Shutdown and end connection
