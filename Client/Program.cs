@@ -26,6 +26,8 @@ namespace Client
                 // connected to the same address as specified by the server, port
                 // combination.
                 Int32 port = 13000;
+                Console.WriteLine("Enter IP: ");
+                server = Console.ReadLine();
                 TcpClient client = new TcpClient(server, port);
 
 
@@ -74,21 +76,32 @@ namespace Client
 
         private static void ListenForMessages(object obj)
         {
-            TcpClient client = (TcpClient)obj;
-            NetworkStream stream = client.GetStream();
-
-            // Buffer to store the response bytes.
-            byte[] data = new Byte[256];
-
-            // String to store the response ASCII representation.
-            string responseData;
-
-            while (true)
+            try
             {
-                // Read the first batch of the TcpServer response bytes.
-                Int32 bytes = stream.Read(data, 0, data.Length);
-                responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
-                Console.WriteLine("Received: {0}", responseData);
+                TcpClient client = (TcpClient)obj;
+                NetworkStream stream = client.GetStream();
+
+                // Buffer to store the response bytes.
+                byte[] data = new Byte[256];
+
+                // String to store the response ASCII representation.
+                string responseData;
+
+                while (true)
+                {
+                    // Read the first batch of the TcpServer response bytes.
+                    Int32 bytes = stream.Read(data, 0, data.Length);
+                    responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                    Console.WriteLine("Received: {0}", responseData);
+                }
+            }
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine("ArgumentNullException: {0}", e);
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("SocketException: {0}", e);
             }
         }
 

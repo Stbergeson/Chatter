@@ -18,7 +18,7 @@ namespace Server
             public string data;
             public TcpListener server;
             public int port;
-            IPAddress localAddr;
+            public IPAddress localAddr;
 
             public StateOfObject(int _port, string ip = "127.0.0.1")
             {
@@ -45,7 +45,14 @@ namespace Server
 
         public static async Task Main(string[] args)
         {
-            StateOfObject soo = new(13000);
+            IPAddress[] localIp = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
+            
+            StateOfObject soo = new(13000, localIp[1].ToString());
+
+            Console.WriteLine("Local IP: " + soo.localAddr);
+            Console.WriteLine("\nPort : " + soo.port);
+            
+
             listOfClients = new List<TcpClient>();
             try
             {
@@ -53,17 +60,16 @@ namespace Server
                 // Start listening for client requests.
                 soo.server.Start();
                 TcpClient client;
+                Console.Write("\nLListening for connections... ");
 
                 // Enter the listening loop.
                 while (true)
                 {
-                    Console.Write("Waiting for a connection... ");
+                    //accepts next incoming connection
                     client = soo.server.AcceptTcpClient();
+
+                    //create new thread for client connection
                     ThreadPool.QueueUserWorkItem(ThreadProc, new Connection(soo, client));
-                    // Perform a blocking call to accept requests.
-                    // You could also use server.AcceptSocket() here.
-                    //TcpClient client = soo.server.AcceptTcpClient();
-                    //await ListenForClientAsync(await soo.server.AcceptTcpClientAsync(), soo);
 
                 }
             }
@@ -94,53 +100,12 @@ namespace Server
                 Console.WriteLine("Error with connection.");
             }
             
-            //ListenForClient(connection.client, connection.soo);
         }
 
-        private static void ListenForClient(TcpClient client, StateOfObject soo)
-        {
-            Console.WriteLine("Connected!");
-
-
-
-            // Get a stream object for reading and writing
-            NetworkStream stream = client.GetStream();
-            
-
-            int i;
-
-            // Loop to receive all the data sent by the client.
-            while ((i = stream.Read(soo.bytes, 0, soo.bytes.Length)) != 0)
-            {
-                // Translate data bytes to a ASCII string.
-                soo.data = System.Text.Encoding.ASCII.GetString(soo.bytes, 0, i);
-                Console.WriteLine("Received: {0}", soo.data);
-
-                // Process the data sent by the client.
-                soo.data = soo.data.ToUpper();
-
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(soo.data);
-
-                stream.Write(msg, 0, msg.Length);
-                Console.WriteLine("Sent: {0}", soo.data);
-
-                Console.WriteLine("count: " + listOfClients.Count);
-                // Send back a response.
-                /*foreach (var item in listOfStreams)
-                {
-                    item.Write(msg, 0, msg.Length);
-                    Console.WriteLine("Sent: {0}", soo.data);
-                }*/
-                
-            }
-
-            // Shutdown and end connection
-            client.Close();
-        }
 
         private static async Task ListenForClientAsync(TcpClient client, StateOfObject soo)
         {
-            Console.WriteLine("Connected!");
+            Console.WriteLine("\nNew Client Connected!");
 
 
 
@@ -161,10 +126,8 @@ namespace Server
 
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(soo.data);
 
-                // Send back a response.
-                /*await stream.WriteAsync(msg, 0, msg.Length);
-                Console.WriteLine("Sent: {0}", soo.data);
-                Console.WriteLine("count: " + listOfStreams.Count);*/
+
+                // broadcast message to all clients
 
                 foreach (var item in listOfClients)
                 {
