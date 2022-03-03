@@ -60,7 +60,7 @@ namespace Server
                 // Start listening for client requests.
                 soo.server.Start();
                 TcpClient client;
-                Console.Write("\nLListening for connections... ");
+                Console.Write("\nListening for connections... ");
 
                 // Enter the listening loop.
                 while (true)
@@ -127,12 +127,30 @@ namespace Server
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(soo.data);
 
 
-                // broadcast message to all clients
+                // broadcast message to all clients. Check for and remove all disconnected clients
+
+                List<TcpClient> listOfClientsToRemove = new();
 
                 foreach (var item in listOfClients)
                 {
-                    await item.GetStream().WriteAsync(msg, 0, msg.Length);
-                    Console.WriteLine("Sent: {0}", soo.data);
+                    if (item.Connected)
+                    {
+                        await item.GetStream().WriteAsync(msg, 0, msg.Length);
+                        Console.WriteLine("Sent: {0}", soo.data);
+                    }
+                    else
+                    {
+                        //prepare disconnected clients to be removed
+                        Console.WriteLine("Client is no longer connected: " + listOfClients.Count);
+                        listOfClientsToRemove.Add(item);
+                    }
+                }
+
+                foreach(var item in listOfClientsToRemove)
+                {
+                    //remove all disconnected clients
+                    listOfClients.Remove(item);
+                    Console.WriteLine("Client removed. Clients Remaining: " + listOfClients.Count);
                 }
             }
 
