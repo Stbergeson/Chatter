@@ -25,27 +25,41 @@ namespace Client
                 // Note, for this client to work you need to have a TcpServer
                 // connected to the same address as specified by the server, port
                 // combination.
+                
                 Int32 port = 13000;
+                Byte[] data = null;
+
+
+                #region userinput
+
                 Console.WriteLine("Enter IP: ");
                 server = Console.ReadLine();
+                
+                Console.WriteLine("Enter Username: ");
+                message = Console.ReadLine();
+
+                #endregion
+
                 TcpClient client = new TcpClient(server, port);
 
 
                 //create new thread to listen for incoming messages
                 ThreadPool.QueueUserWorkItem(ListenForMessages, client);
-
-                // Translate the passed message into ASCII and store it as a Byte array.
-                Byte[] data = null;
+        
 
                 // Get a client stream for reading and writing.
-                //  Stream stream = client.GetStream();
-
                 NetworkStream stream = client.GetStream();
 
-                while(message != "bye")
+                //pass username before entering messaging loop
+                data = System.Text.Encoding.ASCII.GetBytes(message);
+                stream.Write(data, 0, data.Length);
+
+                while (message != "bye")
                 {
 
                     message = Console.ReadLine();
+
+                    // Translate the passed message into ASCII and store it as a Byte array.
                     data = System.Text.Encoding.ASCII.GetBytes(message);
 
 
