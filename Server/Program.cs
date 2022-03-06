@@ -115,6 +115,9 @@ namespace Server
             int i;
             bool firstPass = true;
             string username = "";
+            byte[] msg;
+
+
             // Loop to receive all the data sent by the client.
             while ((i = stream.ReadAsync(soo.bytes, 0, soo.bytes.Length).Result) != 0)
             {
@@ -124,17 +127,18 @@ namespace Server
                 {
                     username = soo.data = System.Text.Encoding.ASCII.GetString(soo.bytes, 0, i);
                     Console.WriteLine("{0} has arrived!", soo.data);
+                    msg = System.Text.Encoding.ASCII.GetBytes("You are now connected...");
+                    await client.GetStream().WriteAsync(msg, 0, msg.Length);
+                    firstPass = false;
                 }
                 else
                 {
                     soo.data = System.Text.Encoding.ASCII.GetString(soo.bytes, 0, i);
-                    Console.WriteLine("Received: {0}", soo.data);
+                    Console.WriteLine($"{username}: {soo.data}");
                 }
 
-                // Process the data sent by the client.
-                soo.data = soo.data.ToUpper();
 
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(soo.data);
+                msg = System.Text.Encoding.ASCII.GetBytes($"{username}: {soo.data}");
 
 
                 // broadcast message to all clients. Check for and remove all disconnected clients
@@ -145,8 +149,10 @@ namespace Server
                 {
                     if (item.Connected)
                     {
-                        await item.GetStream().WriteAsync(msg, 0, msg.Length);
-                        Console.WriteLine($"{username}: {soo.data}");
+                        if(item != client)
+                        { 
+                            await item.GetStream().WriteAsync(msg, 0, msg.Length);
+                        }
                     }
                     else
                     {
