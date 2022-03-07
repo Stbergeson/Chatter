@@ -1,4 +1,5 @@
 ﻿using ClientGUI.Commands;
+using ClientGUI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,16 +56,28 @@ namespace ClientGUI.ViewModels
             ChangeViewModel(PageViewModels[1]);
         }
 
+        private void OnGoMainScreen(object obj)
+        {
+            ChangeViewModel(PageViewModels[3]);
+            HomeViewModel vm = (HomeViewModel)PageViewModels[3];
+            vm.connection = (Connection)obj;
+        }
+
+
+
         public MainWindowViewModel()
         {
             // Add available pages and set page
             PageViewModels.Add(new UserControl1ViewModel());
             PageViewModels.Add(new UserControl2ViewModel());
+            PageViewModels.Add(new SplashViewModel());
+            PageViewModels.Add(new HomeViewModel());
 
-            CurrentPageViewModel = PageViewModels[0];
+            CurrentPageViewModel = PageViewModels[2];
 
             Mediator.Subscribe("GoTo1Screen", OnGo1Screen);
             Mediator.Subscribe("GoTo2Screen", OnGo2Screen);
+            Mediator.Subscribe("GoToMainScreen", OnGoMainScreen);
         }
     }
 }
