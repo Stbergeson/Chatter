@@ -7,8 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Label x:Name="label" Content="{Binding connection.Username}" HorizontalAlignment="Left" Margin="185,166,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label1" Content="{Binding connection.IP}" HorizontalAlignment="Left" Margin="166,0,0,0" VerticalAlignment="Center"/>
-
+        <Label x:Name="label" Content="{Binding Username}" HorizontalAlignment="Left" Margin="185,166,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label1" Content="{Binding IP}" HorizontalAlignment="Left" Margin="166,0,0,0" VerticalAlignment="Center"/>
     </Grid>
 </UserControl>

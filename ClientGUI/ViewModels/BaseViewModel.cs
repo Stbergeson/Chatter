@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClientGUI.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -8,21 +9,39 @@ using System.Threading.Tasks;
 
 namespace ClientGUI.ViewModels
 {
-    public abstract class BaseViewModel : INotifyPropertyChanged
+    public abstract class BaseViewModel : PropertyChangedViewModel
     {
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged(string propertyName)
+        #region connectionInfo
+
+
+        public Connection connection = new();
+
+        public string Username
         {
-            VerifyPropertyName(propertyName);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get
+            {
+                return connection.Username;
+            }
+            set
+            {
+                connection.Username = value;
+            }
+        }
+        public string IP
+        {
+            get
+            {
+                return connection.IP;
+            }
+            set
+            {
+                connection.IP = value;
+            }
         }
 
-        [Conditional("DEBUG")]
-        private void VerifyPropertyName(string propertyName)
-        {
-            if (TypeDescriptor.GetProperties(this)[propertyName] == null)
-                throw new ArgumentNullException(GetType().Name + " does not contain property: " + propertyName);
-        }
+        #endregion
+
+        
     }
 }

@@ -9,6 +9,6 @@ namespace ClientGUI.ViewModels
 {
     public class HomeViewModel : BaseViewModel, IPageViewModel
     {
-        public Connection connection;
+
     }
 }

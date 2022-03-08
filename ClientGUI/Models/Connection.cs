@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ClientGUI.Models
 {
-    public class Connection : BaseViewModel
+    public class Connection : PropertyChangedViewModel
     {
         private string _username;
         private string _ip;
@@ -22,7 +22,6 @@ namespace ClientGUI.Models
             set
             {
                 _username = value;
-                OnPropertyChanged("Username");
             }
         }
         public string IP
@@ -34,7 +33,7 @@ namespace ClientGUI.Models
             set
             {
                 _ip = value;
-                OnPropertyChanged("IP");
+                OnPropertyChanged(nameof(IP));
             }
         }
     }
