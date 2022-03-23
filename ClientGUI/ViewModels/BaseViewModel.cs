@@ -17,6 +17,8 @@ namespace ClientGUI.ViewModels
 
         public Connection connection = new();
 
+        public Client client = new();
+
         public string Username
         {
             get

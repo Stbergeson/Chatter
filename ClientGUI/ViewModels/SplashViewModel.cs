@@ -26,10 +26,20 @@ namespace ClientGUI.ViewModels
         {
             get
             {
-                return _goToMain ?? (_goToMain = new RelayCommand(x =>
+                try {
+
+                    return _goToMain ?? (_goToMain = new RelayCommand(x =>
+                    {
+                        client.Connect(connection.IP);
+                        client.SendMessage("hellllo");
+                        Mediator.Notify("GoToMainScreen", connection);
+                    }));
+                }
+                catch
                 {
-                    Mediator.Notify("GoToMainScreen", connection);
-                }));
+                    return _goToMain;
+                }
+
             }
         }
     }
