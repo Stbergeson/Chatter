@@ -9,5 +9,6 @@
     <Grid>
         <Label x:Name="label" Content="{Binding Username}" HorizontalAlignment="Left" Margin="185,166,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label1" Content="{Binding IP}" HorizontalAlignment="Left" Margin="166,0,0,0" VerticalAlignment="Center"/>
+        <Button x:Name="button" Content="Button" Command="{Binding SendMessage}" HorizontalAlignment="Left" Margin="216,350,0,0" VerticalAlignment="Top"/>
     </Grid>
 </UserControl>

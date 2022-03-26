@@ -23,5 +23,9 @@ namespace ClientGUI
             app.DataContext = context;
             app.Show();
         }
+
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+        }
     }
 }

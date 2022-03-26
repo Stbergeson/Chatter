@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ClientGUI"
              xmlns:views="clr-namespace:ClientGUI.Views"
-             xmlns:viewModels="clr-namespace:ClientGUI.ViewModels">
+             xmlns:viewModels="clr-namespace:ClientGUI.ViewModels"
+             Exit="Application_Exit">
     <Application.Resources>
         <DataTemplate DataType="{x:Type viewModels:SplashViewModel}">
             <views:SplashView />

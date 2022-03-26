@@ -50,7 +50,7 @@ namespace ClientGUI.Models
 
         }
 
-        void CloseStream()
+        public void CloseStream()
         {
             // Close everything.
             stream.Close();
