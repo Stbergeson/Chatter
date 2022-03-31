@@ -11,7 +11,7 @@ namespace ClientGUI.Models
     {
         private string _username;
         private string _ip;
-
+        public Client client = new();
 
         public string Username
         {

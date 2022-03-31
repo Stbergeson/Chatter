@@ -30,8 +30,8 @@ namespace ClientGUI.ViewModels
 
                     return _goToMain ?? (_goToMain = new RelayCommand(x =>
                     {
-                        client.Connect(connection.IP);
-                        client.SendMessage("hellllo");
+                        connection.client.Connect(connection.IP);
+                        connection.client.SendMessage(connection.Username);
                         Mediator.Notify("GoToMainScreen", connection);
                     }));
                 }

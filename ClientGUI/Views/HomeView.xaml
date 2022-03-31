@@ -7,8 +7,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Label x:Name="label" Content="{Binding Username}" HorizontalAlignment="Left" Margin="185,166,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label1" Content="{Binding IP}" HorizontalAlignment="Left" Margin="166,0,0,0" VerticalAlignment="Center"/>
-        <Button x:Name="button" Content="Button" Command="{Binding SendMessage}" HorizontalAlignment="Left" Margin="216,350,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label" Content="{Binding Username}" HorizontalAlignment="Left" Margin="185,151,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+        <Label x:Name="label1" Content="{Binding IP}" HorizontalAlignment="Left" Margin="166,205,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+        <Button x:Name="button" Content="Send" Command="{Binding SendMessage}" HorizontalAlignment="Left" Margin="286,392,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Margin="26,393,0,0" Text="{Binding Message}" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" VerticalAlignment="Top" Width="223"/>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="26,43,0,0" Text="{Binding History}" TextWrapping="Wrap" VerticalAlignment="Top" Height="272" Width="291" Background="White"/>
     </Grid>
 </UserControl>

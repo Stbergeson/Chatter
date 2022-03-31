@@ -12,9 +12,26 @@ namespace ClientGUI.Models
     {
 
         int port;
-        byte[] data;
         TcpClient client;
         NetworkStream stream;
+        Action<string> _writeToHistory;
+
+        public void SetAction(Action<string> passedFunction)
+        {
+            _writeToHistory = passedFunction;
+        }
+
+        public Action<string> WriteToHistory
+        {
+            get
+            {
+                return _writeToHistory;
+            }
+            set
+            {
+                _writeToHistory = value;
+            }
+        }
 
         public void Connect(String server)
         {
@@ -26,7 +43,6 @@ namespace ClientGUI.Models
                 // combination.
 
                 port = 13000;
-                data = null;
                 client = new TcpClient(server, port);
 
 
@@ -60,6 +76,7 @@ namespace ClientGUI.Models
         public void SendMessage(string message)
         {
             // Translate the passed message into ASCII and store it as a Byte array.
+            byte[] data = new Byte[256];
             data = System.Text.Encoding.ASCII.GetBytes(message);
 
 
@@ -76,7 +93,7 @@ namespace ClientGUI.Models
                 NetworkStream stream = client.GetStream();
 
                 // Buffer to store the response bytes.
-                data = new Byte[256];
+                byte[] data = new Byte[256];
 
                 // String to store the response ASCII representation.
                 string responseData;
@@ -86,6 +103,8 @@ namespace ClientGUI.Models
                     // Read the first batch of the TcpServer response bytes.
                     int bytes = stream.Read(data, 0, data.Length);
                     responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                    if(WriteToHistory != null)
+                        WriteToHistory(responseData);
                     Console.WriteLine(responseData);
                 }
             }

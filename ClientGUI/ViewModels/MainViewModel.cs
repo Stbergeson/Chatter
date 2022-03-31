@@ -60,7 +60,9 @@ namespace ClientGUI.ViewModels
         {
             ChangeViewModel(PageViewModels[3]);
             HomeViewModel vm = (HomeViewModel)PageViewModels[3];
-            vm.connection = (Connection)obj;
+            Connection splashConnection = (Connection)obj;
+            splashConnection.client.WriteToHistory = vm.connection.client.WriteToHistory;
+            vm.connection = splashConnection;
         }
 
 
