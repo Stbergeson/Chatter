@@ -50,7 +50,7 @@ namespace ClientGUI.ViewModels
         private void OnGoMainScreen(object obj)
         {
             ChangeViewModel(PageViewModels[1]);
-            HomeViewModel vm = (HomeViewModel)PageViewModels[3];
+            HomeViewModel vm = (HomeViewModel)PageViewModels[1];
             Connection splashConnection = (Connection)obj;
             splashConnection.client.WriteToHistory = vm.connection.client.WriteToHistory;
             vm.connection = splashConnection;

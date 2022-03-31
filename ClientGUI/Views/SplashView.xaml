@@ -20,9 +20,9 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="1" Grid.Column="1">
-            <Label Content="Server IP" HorizontalAlignment="Center"/>
+            <Label Content="Username" HorizontalAlignment="Center"/>
             <TextBox x:Name="textBox" HorizontalAlignment="Center" Margin="0,24,0,0"  Text="{Binding Username}" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-            <Label Content="Username" Margin="0,48,0,0" HorizontalAlignment="Center"/>
+            <Label Content="Server IP" Margin="0,48,0,0" HorizontalAlignment="Center"/>
             <TextBox x:Name="textBox2" HorizontalAlignment="Center" Margin="0,72,0,0"  Text="{Binding IP}" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
             <Button x:Name="button" Content="Button" Command="{Binding GoToMain}"  VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
 
