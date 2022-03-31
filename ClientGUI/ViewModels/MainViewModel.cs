@@ -46,19 +46,10 @@ namespace ClientGUI.ViewModels
                 .FirstOrDefault(vm => vm == viewModel);
         }
 
-        private void OnGo1Screen(object obj)
-        {
-            ChangeViewModel(PageViewModels[0]);
-        }
-
-        private void OnGo2Screen(object obj)
-        {
-            ChangeViewModel(PageViewModels[1]);
-        }
 
         private void OnGoMainScreen(object obj)
         {
-            ChangeViewModel(PageViewModels[3]);
+            ChangeViewModel(PageViewModels[1]);
             HomeViewModel vm = (HomeViewModel)PageViewModels[3];
             Connection splashConnection = (Connection)obj;
             splashConnection.client.WriteToHistory = vm.connection.client.WriteToHistory;
@@ -70,15 +61,11 @@ namespace ClientGUI.ViewModels
         public MainWindowViewModel()
         {
             // Add available pages and set page
-            PageViewModels.Add(new UserControl1ViewModel());
-            PageViewModels.Add(new UserControl2ViewModel());
             PageViewModels.Add(new SplashViewModel());
             PageViewModels.Add(new HomeViewModel());
 
-            CurrentPageViewModel = PageViewModels[2];
+            CurrentPageViewModel = PageViewModels[0];
 
-            Mediator.Subscribe("GoTo1Screen", OnGo1Screen);
-            Mediator.Subscribe("GoTo2Screen", OnGo2Screen);
             Mediator.Subscribe("GoToMainScreen", OnGoMainScreen);
         }
     }

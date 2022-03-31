@@ -14,12 +14,5 @@
             <views:HomeView />
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewModels:UserControl1ViewModel}">
-            <views:UserControl1 />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModels:UserControl2ViewModel}">
-            <views:UserControl2 />
-        </DataTemplate>
-
     </Application.Resources>
 </Application>
