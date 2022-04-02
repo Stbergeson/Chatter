@@ -19,7 +19,7 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
-        <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Column="1" Grid.Row="1">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Grid.Row="1">
             <StackPanel>
                 <TextBlock x:Name="textBlock" Text="{Binding History}" TextWrapping="Wrap" MinHeight="275"  VerticalAlignment="Stretch" Background="SeaShell"/>
             </StackPanel>

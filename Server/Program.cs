@@ -106,9 +106,6 @@ namespace Server
         private static async Task ListenForClientAsync(TcpClient client, StateOfObject soo)
         {
             Console.WriteLine("\nNew Client Connected!");
-
-
-
             // Get a stream object for reading and writing
             NetworkStream stream = client.GetStream();
 
@@ -127,18 +124,16 @@ namespace Server
                 {
                     username = soo.data = System.Text.Encoding.ASCII.GetString(soo.bytes, 0, i);
                     Console.WriteLine("{0} has arrived!", soo.data);
-                    msg = System.Text.Encoding.ASCII.GetBytes("You are now connected...");
+                    msg = System.Text.Encoding.ASCII.GetBytes($"{username} has connected...");
                     await client.GetStream().WriteAsync(msg, 0, msg.Length);
                     firstPass = false;
                 }
                 else
                 {
                     soo.data = System.Text.Encoding.ASCII.GetString(soo.bytes, 0, i);
-                    Console.WriteLine($"{username}: {soo.data}");
+                    msg = System.Text.Encoding.ASCII.GetBytes($"{username}: {soo.data}");
+                    Console.WriteLine($"[{string.Format("{0:HH:mm:ss tt}", DateTime.Now)}]{username}: {soo.data}");
                 }
-
-
-                msg = System.Text.Encoding.ASCII.GetBytes($"{username}: {soo.data}");
 
 
                 // broadcast message to all clients. Check for and remove all disconnected clients

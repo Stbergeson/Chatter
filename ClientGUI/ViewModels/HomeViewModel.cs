@@ -24,7 +24,7 @@ namespace ClientGUI.ViewModels
 
         private void Listener(string response)
         {
-            History += "\n" + response;
+            History += $"\n[{string.Format("{0:HH:mm:ss tt}", DateTime.Now)}] " + response;
         }
 
         public string Message
@@ -60,7 +60,7 @@ namespace ClientGUI.ViewModels
                     return _sendMessage ?? (_sendMessage = new RelayCommand(x =>
                     {
                         connection.client.SendMessage(_message);
-                        History += Message != "" ? $"\n{Username}: {Message}" : "";
+                        History += Message != "" ? $"\n[{string.Format("{0:HH:mm:ss tt}", DateTime.Now)}] {Username}: {Message}" : "";
                         Message = "";
                     }));
             }
